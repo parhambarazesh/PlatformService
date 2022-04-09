@@ -1,4 +1,4 @@
-﻿# Tech used in this tutorial:
+# Tech used in this tutorial:
 
 ## 1. Command Service
 
@@ -182,7 +182,28 @@ Persistent Volume Claim is used to claim some storage on physical device. e.g. t
 
 **To run the application in Kubernetes:**
 
-1. Create .yaml file (we created platform-depl.yaml)
+1. Create .yaml file for deployment (we created platform-depl.yaml)
+
+   ```
+   apiVersion: apps/v1
+   kind: Deployment
+   metadata:
+     name: platform-depl
+   spec:
+     replicas: 1
+     selector:
+       matchLabels:
+         app: platformservice
+     template:
+       metadata:
+         labels:
+           app: platformservice
+       spec:
+         containers:
+           - name: platformservice
+             image: parhambrz/platformservice:latest
+
+   ```
 2. kubectl apply -f platform-depl.yaml
 
 **This will create a deployment. To get all deployments:**
@@ -198,3 +219,51 @@ After applying the yaml file two containers will show in Docker Desktop. One is 
 **To Delete a deployment named "platform-depl"**
 
 kubectl delete deployment platform-depl
+
+This will delete the attached pods to the deployment as well.
+
+**NodePorts:**
+
+NodePort is used to give external access to our service.
+
+How to create?
+
+NodePort is a **Servic****e**
+
+1. Create .yaml file for NodePort Service (we create platforms-np-srv.yaml)
+
+   ```
+   apiVersion: v1
+   kind: Service
+   metadata:
+     name: platformnpservice-srv
+   spec:
+     type: NodePort
+     selector:
+       app: platformservice
+     ports:
+       - name: platformservice
+         protocol: TCP
+         port: 80
+         targetPort: 80
+   ```
+2. kubectl apply -f platforms-np-srv.yaml
+
+**To get all services:**
+
+kubectl get services
+
+How to access the service from outside?
+
+1. run kubectl get services. the result will be something like:
+
+   ![1649417419818.png](image/Readme/1649417419818.png)
+2. port 31822 is the port to use to access the service from outside. it is mapped to the port 80 inside the container.
+
+# **Create CommandsService project:**
+
+run dotnet new webapi -n CommandsService --framework net5.0
+
+-n: name of the project
+
+--framework: .NET framework to use. if skipped the latest version will be selected (now .NET 6)
