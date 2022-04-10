@@ -266,4 +266,4 @@ run dotnet new webapi -n CommandsService --framework net5.0
 
 -n: name of the project
 
---framework: .NET framework to use. if skipped the latest version will be selected (now .NET 6)
+--framework: .NET framework to use. if skipped the latest version will be selected (now .NET 6).
